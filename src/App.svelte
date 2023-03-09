@@ -1,5 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
+    import * as poseDetection from "@tensorflow-models/pose-detection";
 
     import Game from "./lib/Game.svelte";
 
@@ -42,11 +43,18 @@
         canvasLoop();
     };
 
-    const canvasLoop = () => {
+    const canvasLoop = async () => {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.save();
         ctx.scale(-1, 1);
         ctx.translate(-canvas.width, 0);
+
+        const model = poseDetection.SupportedModels.MoveNet;
+        const detector = await poseDetection.createDetector(model);
+
+        const poses = await detector.estimatePoses(video);
+        console.log(poses);
+
         ctx.drawImage(video, 0, 0, videoWidth, videoHeight);
         ctx.restore();
         requestAnimationFrame(canvasLoop);
@@ -65,6 +73,8 @@
 </script>
 
 <div class="bg-blue-300 h-[100vh] flex items-center justify-around text-white">
-    <video  class="hidden" id="video" playsinline> Video stream not available. </video>
+    <video class="hidden" id="video" playsinline>
+        Video stream not available.
+    </video>
     <canvas id="canvas" />
 </div>
