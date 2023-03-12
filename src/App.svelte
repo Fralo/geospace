@@ -2,6 +2,7 @@
     import { onMount } from "svelte";
     import "@tensorflow/tfjs";
     import * as poseDetection from "@tensorflow-models/pose-detection";
+    import { Circle, detectCollision, Target } from "./game/Shapes";
 
     let video = null;
     let canvas: HTMLCanvasElement = null;
@@ -19,6 +20,9 @@
 
     const videoWidth = window.innerWidth / 2.8;
     const videoHeight = window.innerWidth / 2.8;
+
+    let target = new Target();
+    let score = 0;
 
     const setupCamera = async () => {
         if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -49,6 +53,7 @@
     };
 
     const setupCanvas = () => {
+        target.setRandomCoords(canvas);
         canvasLoop();
     };
 
@@ -70,13 +75,24 @@
 
         ctx.drawImage(video, 0, 0, videoWidth, videoHeight);
 
+        let circles = [];
+
         let keypoints = getKeypoints(poses);
         keypoints.forEach(({ x, y, score }) => {
             if (score > 0.2) {
-                ctx.beginPath();
-                ctx.arc(canvas.width - x, y, 10, 0, 2 * Math.PI);
-                ctx.fillStyle = "red";
-                ctx.fill();
+                let circle = new Circle(20);
+                circle.setCoords(canvas.width - x, y);
+                circle.draw(canvas, ctx);
+                circles.push(circle);
+            }
+        });
+
+        target.draw(canvas, ctx);
+
+        circles.forEach((circle) => {
+            if (detectCollision(circle, target)) {
+                target.setRandomCoords(canvas);
+                score++;
             }
         });
 
@@ -120,5 +136,7 @@
         Video stream not available.
     </video>
     <canvas id="canvas" />
-    <canvas id="" />
+    <div class="text-6xl text-left">
+        Punteggio: {score}
+    </div>
 </div>
