@@ -1,5 +1,26 @@
 <script>
-    import GithubButton from "./GithubButton.svelte";
+    import { location } from "svelte-spa-router";
+    import GithubButton from "./navbar/GithubButton.svelte";
+    import NavLink from "./navbar/NavLink.svelte";
+
+    const links = [
+        {
+            href: "/",
+            text: "Home",
+        },
+        {
+            href: "/rules",
+            text: "Rules",
+        },
+        {
+            href: "/play",
+            text: "Play",
+        },
+        {
+            href: "/training",
+            text: "Training",
+        },
+    ];
 </script>
 
 <div
@@ -9,18 +30,11 @@
 
     <nav>
         <ul class="flex gap-10">
-            <li>
-                <a href="#" class="text-gray-400 hover:text-white">Home</a>
-            </li>
-            <li>
-                <a href="#" class="text-gray-400 hover:text-white">Rules</a>
-            </li>
-            <li>
-                <a href="#" class="text-gray-400 hover:text-white">Play</a>
-            </li>
-            <li>
-                <a href="#" class="text-gray-400 hover:text-white">Training</a>
-            </li>
+            {#each links as link}
+                <NavLink href={`#${link.href}`} active={link.href === $location}
+                    >{link.text}</NavLink
+                >
+            {/each}
         </ul>
     </nav>
 

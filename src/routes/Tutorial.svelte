@@ -1,4 +1,7 @@
 <script lang="ts">
+    import Navbar from "../lib/common/Navbar.svelte";
+
+
     import { onMount } from "svelte";
     import "@tensorflow/tfjs";
     import * as poseDetection from "@tensorflow-models/pose-detection";
@@ -16,7 +19,7 @@
         MODE_NOSE: ["nose"],
     };
 
-    const selectedMode = "MODE_HANDS";
+    const selectedMode = "MODE_NOSE";
 
     const videoWidth = window.innerWidth / 2.8;
     const videoHeight = window.innerWidth / 2.8;
@@ -132,10 +135,8 @@
 </script>
 
 <div>
-    <a href="#">Home</a>
-    <div
-        class="bg-blue-300 h-[100vh] flex items-center justify-around text-white"
-    >
+    <Navbar />
+    <div class="h-full flex items-center justify-around text-white">
         <video class="hidden" id="video" playsinline>
             Video stream not available.
         </video>
