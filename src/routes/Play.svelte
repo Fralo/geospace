@@ -3,6 +3,6 @@
 
 <div class="h-full">
     <div class="flex items-center min-h-full justify-center text-5xl font-bold">
-        HOME
+        PLAY
     </div>
 </div>

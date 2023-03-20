@@ -26,7 +26,9 @@
 <div
     class="h-24 flex justify-between items-center px-8 border-b border-gray-800 "
 >
-    <h3 class="font-semibold tracking-[3px] w-[150px]">GEOSPACE</h3>
+    <a href="#/">
+        <h3 class="font-semibold tracking-[3px] w-[150px] hover:font-bold transition-all">GEOSPACE</h3>
+    </a>
 
     <nav>
         <ul class="flex gap-10">

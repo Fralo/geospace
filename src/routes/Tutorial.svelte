@@ -1,7 +1,4 @@
 <script lang="ts">
-    import Navbar from "../lib/common/Navbar.svelte";
-
-
     import { onMount } from "svelte";
     import "@tensorflow/tfjs";
     import * as poseDetection from "@tensorflow-models/pose-detection";
@@ -135,7 +132,6 @@
 </script>
 
 <div>
-    <Navbar />
     <div class="h-full flex items-center justify-around text-white">
         <video class="hidden" id="video" playsinline>
             Video stream not available.

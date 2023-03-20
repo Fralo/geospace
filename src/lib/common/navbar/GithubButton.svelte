@@ -1,8 +1,4 @@
-<a
-    href="https://github.com/Fralo/geospace"
-    target="_blank"
-    rel="noreferrer"
->
+<a href="https://github.com/Fralo/geospace" class="hover:scale-105 transition" target="_blank" rel="noreferrer">
     <svg
         xmlns="http://www.w3.org/2000/svg"
         width="24"
