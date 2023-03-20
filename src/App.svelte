@@ -14,6 +14,6 @@
     };
 </script>
 
-<div>
+<div class="text-white min-h-screen bg-gray-900">
     <Router {routes} />
 </div>

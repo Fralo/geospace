@@ -1,6 +1,10 @@
-<div>
-    <a href="#/">Home</a>
-    <a href="#/training">Training</a>
+<script>
+    import Navbar from "../lib/common/Navbar.svelte";
+</script>
 
-    <h1>Sono la home</h1>
+<div class="w-full">
+    <Navbar />
+    <div class="flex items-center min-h-full justify-center text-5xl font-bold">
+        HOME
+    </div>
 </div>

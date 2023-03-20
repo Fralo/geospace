@@ -16,7 +16,7 @@
         MODE_NOSE: ["nose"],
     };
 
-    const selectedMode = "MODE_NOSE";
+    const selectedMode = "MODE_HANDS";
 
     const videoWidth = window.innerWidth / 2.8;
     const videoHeight = window.innerWidth / 2.8;
