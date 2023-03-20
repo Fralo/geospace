@@ -131,14 +131,12 @@
     });
 </script>
 
-<div>
-    <div class="h-full flex items-center justify-around text-white">
-        <video class="hidden" id="video" playsinline>
-            Video stream not available.
-        </video>
-        <canvas id="canvas" />
-        <div class="text-6xl text-left">
-            Punteggio: {score}
-        </div>
+<div class="h-full min-h-[80vh] flex flex-col items-center justify-around text-white">
+    <video class="hidden" id="video" playsinline>
+        Video stream not available.
+    </video>
+    <canvas id="canvas" />
+    <div class="text-4xl text-center">
+        Punteggio: {score}
     </div>
 </div>
