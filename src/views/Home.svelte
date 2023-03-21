@@ -2,12 +2,12 @@
     import Button from "../lib/common/Button.svelte";
 </script>
 
-<div class="h-full">
-    <div class="flex items-center min-h-full justify-center text-5xl font-bold">
-        <h1>GEOSPACE</h1>
-        <div>
+<div class="mt-10 h-full">
+    <div class="flex flex-col items-center min-h-full justify-center gap-6">
+        <h1 class="text-5xl font-bold">GEOSPACE</h1>
+        <div class="max-w-3xl">
             Geospace è un coinvolgente web-game di riflessi che mette alla prova
-            la velocità e l'abilità dei giocatori. Ambientato in uno spazio
+            la velocità e l'abilità dei giocatori. <br/>Ambientato in uno spazio
             futuristico, il gioco presenta un'interfaccia grafica accattivante e
             una colonna sonora elettronica che contribuiscono a creare
             un'atmosfera coinvolgente. L'obiettivo del gioco è di evitare
