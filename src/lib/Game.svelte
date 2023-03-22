@@ -16,7 +16,7 @@
         MODE_NOSE: ["nose"],
     };
 
-    const selectedMode = "MODE_NOSE";
+    export let mode = "MODE_NOSE";
 
     const videoWidth = window.innerWidth / 2.8;
     const videoHeight = window.innerWidth / 2.8;
@@ -105,7 +105,7 @@
         let allKeypoints = poses[0].keypoints;
 
         return allKeypoints.filter((keypoint) => {
-            return MODES[selectedMode].includes(keypoint.name);
+            return MODES[mode].includes(keypoint.name);
         });
     };
 
@@ -131,11 +131,12 @@
     });
 </script>
 
-<div>
-    <div class="">
-        <video class="hidden" id="video" playsinline>
-            Video stream not available.
-        </video>
-        <canvas id="canvas" />
+<div class="h-full min-h-[80vh] flex flex-col items-center justify-around text-white">
+    <video class="hidden" id="video" playsinline>
+        Video stream not available.
+    </video>
+    <canvas id="canvas" />
+    <div class="text-4xl text-center">
+        Punteggio: {score}
     </div>
 </div>

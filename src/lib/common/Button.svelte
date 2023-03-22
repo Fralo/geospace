@@ -13,6 +13,6 @@
     }
 </script>
 
-<button class={classes}>
+<button class={classes} on:click>
     <slot />
 </button>
