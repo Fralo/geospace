@@ -1,11 +1,19 @@
-<script>
+<script lang="ts">
     import Button from "../lib/common/Button.svelte";
     import Game from "../lib/Game.svelte";
     import GameStats from "../lib/GameStats.svelte";
     import Setup from "../lib/training/Setup.svelte";
 
+    type GameConfig = {
+        mode: string;
+        time: number;
+        playersNum: number;
+    };
+
     let page = "setup";
-    let gameConfig = {};
+
+    let gameConfig: GameConfig = null;
+
     let results = {
         score: 3,
         time: 10,
