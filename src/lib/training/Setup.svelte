@@ -16,6 +16,17 @@
         };
     });
 
+    const playesOption = [
+        {
+            value: 1,
+            label: "One",
+        },
+        {
+            value: 2,
+            label: "Two",
+        },
+    ];
+
     const timeUnits = [
         {
             value: 1,
@@ -30,22 +41,19 @@
     let time = 30;
     let mode = modes[0].value;
     let timeMultilpier = 1;
+    let playersNum = 1;
 
     const startTraining = () => {
         dispatch("startTraining", {
             mode,
             time: time * timeMultilpier,
+            playersNum,
         });
     };
-
 </script>
 
 <div>
     <h2>Seleziona le impostazioni di allenamento</h2>
-
-    <br />
-    <br />
-    <br />
 
     <div>
         <div>
@@ -56,6 +64,10 @@
         <div>
             <span>Seleziona la modalità di gioco</span>
             <Select bind:value={mode} selectOptions={modes} />
+        </div>
+        <div>
+            <span>Seleziona il numero di giocatori</span>
+            <Select bind:value={playersNum} selectOptions={playesOption} />
         </div>
     </div>
 
