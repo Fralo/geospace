@@ -31,14 +31,17 @@
 
     export let mode = "MODE_NOSE";
     export let time = 60;
-    export let players = 2;
+    export let players = 1;
 
     const videoWidth = window.innerWidth / 2;
     const videoHeight = window.innerWidth / 2.8;
 
     let target = new Target();
     let score = 0;
-
+    let multiplayerScore = {
+        playerOne: 0,
+        playerTwo: 0,
+    };
     const setupCamera = async () => {
         if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
             throw new Error(
@@ -86,7 +89,7 @@
 
         const poses = await detector.estimatePoses(canvas, estimationConfig);
 
-        console.log(poses)
+        console.log(poses);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         ctx.drawImage(video, 0, 0, videoWidth, videoHeight);
@@ -135,7 +138,10 @@
 
     const initializePosenet = async () => {
         const detectorConfig = {
-            modelType: players === 1 ?poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING : poseDetection.movenet.modelType.MULTIPOSE_LIGHTNING,
+            modelType:
+                players === 1
+                    ? poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING
+                    : poseDetection.movenet.modelType.MULTIPOSE_LIGHTNING,
         };
         const model = poseDetection.SupportedModels.MoveNet;
         detector = await poseDetection.createDetector(model, detectorConfig);
@@ -207,20 +213,36 @@
             {secondsToWait}
         </div>
     {/if}
-    <div class="h-full flex flex-col items-center justify-around text-white">
-        <video class="hidden" id="video" playsinline>
-            Video stream not available.
-        </video>
-        <canvas id="canvas" />
-        {#if gameOn}
-            <div class="flex gap-2 items-center">
-                <div class="text-4xl text-center">
-                    Tempo rimanente: {formatTime(gameTimeRemaining)}
+    <div class="h-full flex items-center justify-around text-white">
+        <div>
+            {#if players === 2}
+                <div class="text-4xl text-center">Player One:</div>
+                <div>{multiplayerScore.playerOne}</div>
+            {/if}
+        </div>
+        <div>
+            <video class="hidden" id="video" playsinline>
+                Video stream not available.
+            </video>
+            <canvas id="canvas" />
+            {#if gameOn}
+                <div class="mt-8 flex flex-col gap-4 items-center">
+                    <div class="text-4xl text-center">
+                        Tempo rimanente: {formatTime(gameTimeRemaining)}
+                    </div>
+                    {#if players === 1}
+                        <div class="text-4xl text-center">
+                            Punteggio: {score}
+                        </div>
+                    {/if}
                 </div>
-                <div class="text-4xl text-center">
-                    Punteggio: {score}
-                </div>
-            </div>
-        {/if}
+            {/if}
+        </div>
+        <div>
+            {#if players === 2}
+                <div class="text-4xl text-center">Player Two:</div>
+                <div>{multiplayerScore.playerTwo}</div>
+            {/if}
+        </div>
     </div>
 </div>

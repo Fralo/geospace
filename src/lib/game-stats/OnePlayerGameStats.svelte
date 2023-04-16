@@ -26,17 +26,21 @@
             value: `${formattedStats.mediumSpeed} hits/second`,
         },
         {
-            label: "TTFH (Time To First Hit)",
+            label: "Time To First Hit",
             value: `${formattedStats.ttfh} milliseconds`,
         },
     ];
 </script>
 
 <div class="border border-white py-4 rounded-3xl w-fit">
-    <div class="border-b border-white text-center font-bold tracking-widest text-4xl pb-4">STATS</div>
+    <div
+        class="border-b border-white text-center font-bold tracking-widest text-4xl pb-4"
+    >
+        STATS
+    </div>
     {#each toShowStats as stat}
         <div class="mx-4 border-b border-white last:border-b-0">
-            <div class="p-2 text-2xl ">{stat.label}:</div>
+            <div class="p-2 text-2xl">{stat.label}:</div>
             <div class="p-2 text-4xl">{stat.value}</div>
         </div>
     {/each}
