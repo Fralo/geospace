@@ -105,8 +105,6 @@
             });
 
             if (gameOn) {
-                target.draw(canvas, ctx);
-
                 circles.forEach((circle) => {
                     if (detectCollision(circle, target)) {
                         target.setRandomCoords(canvas);
@@ -119,6 +117,9 @@
                 });
             }
         }
+        
+        //draws the taregt
+        target.draw(canvas, ctx);
 
         ctx.restore();
         requestAnimationFrame(canvasLoop);
