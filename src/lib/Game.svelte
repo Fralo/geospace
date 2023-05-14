@@ -33,11 +33,24 @@
     export let time = 60;
     export let players = 2;
 
-    const videoWidth = window.innerWidth / 2;
+    const videoWidth = window.innerWidth / 1.2;
     const videoHeight = window.innerWidth / 2.8;
 
-    let target = new Target();
-    let score = 0;
+    let targets = [];
+    for (let i = 0; i < players; i++) {
+        let target = new Target(i > 0 ? "green" : "blue");
+        target.setRandomRawCoords(
+            {
+                width: videoWidth,
+                height: videoHeight,
+            },
+            players == 1 ? "ALL" : i == 0 ? "LEFT" : "RIGHT"
+        );
+
+        targets.push(target);
+    }
+
+    let playerScore = players == 1 ? [0] : [0, 0];
 
     const setupCamera = async () => {
         if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -67,7 +80,13 @@
     };
 
     const setupCanvas = () => {
-        target.setRandomCoords(canvas);
+        for (let i = 0; i < targets.length; i++) {
+            const target = targets[i];
+            target.setRandomCoords(
+                canvas,
+                players == 1 ? "ALL" : i == 0 ? "LEFT" : "RIGHT"
+            );
+        }
         canvasLoop();
     };
 
@@ -84,16 +103,16 @@
             nmsRadius: 20,
         };
 
-        const poses = await detector.estimatePoses(canvas, estimationConfig);
+        let poses = await detector.estimatePoses(canvas, estimationConfig);
 
-        console.log(poses)
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         ctx.drawImage(video, 0, 0, videoWidth, videoHeight);
 
         let circles = [];
 
-        for (const pose of poses) {
+        for (let i = 0; i < poses.length; i++) {
+            const pose = poses[i];
             let keypoints = getKeypoints(pose);
             keypoints.forEach(({ x, y, score }) => {
                 if (score > 0.2) {
@@ -106,9 +125,9 @@
 
             if (gameOn) {
                 circles.forEach((circle) => {
-                    if (detectCollision(circle, target)) {
-                        target.setRandomCoords(canvas);
-                        score++;
+                    if (detectCollision(circle, targets[i])) {
+                        targets[i].setRandomCoords(canvas, players == 1 ? "ALL" : i == 0 ? "LEFT" : "RIGHT");
+                        playerScore[i]++;
                         if (playerOneTTFH === null) {
                             let firstPointTime = Date.now();
                             playerOneTTFH = firstPointTime - gameStartTime;
@@ -117,9 +136,9 @@
                 });
             }
         }
-        
+
         //draws the taregt
-        target.draw(canvas, ctx);
+        targets.forEach((target) => target.draw(canvas, ctx));
 
         ctx.restore();
         requestAnimationFrame(canvasLoop);
@@ -136,7 +155,10 @@
 
     const initializePosenet = async () => {
         const detectorConfig = {
-            modelType: players === 1 ?poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING : poseDetection.movenet.modelType.MULTIPOSE_LIGHTNING,
+            modelType:
+                players === 1
+                    ? poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING
+                    : poseDetection.movenet.modelType.MULTIPOSE_LIGHTNING,
         };
         const model = poseDetection.SupportedModels.MoveNet;
         detector = await poseDetection.createDetector(model, detectorConfig);
@@ -163,9 +185,14 @@
         intervalId = setInterval(() => {
             gameTimeRemaining--;
             if (gameTimeRemaining === 0) {
+                console.debug("time ended");
                 gameOn = false;
                 clearInterval(intervalId);
-                dispatch("gameEnded", { score, time, ttfh: playerOneTTFH });
+                dispatch("gameEnded", {
+                    playerScore,
+                    time,
+                    ttfh: playerOneTTFH,
+                });
             }
         }, 1000);
     }
@@ -218,9 +245,11 @@
                 <div class="text-4xl text-center">
                     Tempo rimanente: {formatTime(gameTimeRemaining)}
                 </div>
-                <div class="text-4xl text-center">
-                    Punteggio: {score}
-                </div>
+                {#each playerScore as score}
+                    <div>
+                        punteggio: {score}
+                    </div>
+                {/each}
             </div>
         {/if}
     </div>
