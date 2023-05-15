@@ -7,6 +7,7 @@
     import "@tensorflow/tfjs";
     import * as poseDetection from "@tensorflow-models/pose-detection";
     import { Circle, detectCollision, Target } from "../game/Shapes";
+    import PlayerCounter from "./game-stats/PlayerCounter.svelte";
 
     let video = null;
     let canvas: HTMLCanvasElement = null;
@@ -126,7 +127,10 @@
             if (gameOn) {
                 circles.forEach((circle) => {
                     if (detectCollision(circle, targets[i])) {
-                        targets[i].setRandomCoords(canvas, players == 1 ? "ALL" : i == 0 ? "LEFT" : "RIGHT");
+                        targets[i].setRandomCoords(
+                            canvas,
+                            players == 1 ? "ALL" : i == 0 ? "LEFT" : "RIGHT"
+                        );
                         playerScore[i]++;
                         if (playerOneTTFH === null) {
                             let firstPointTime = Date.now();
@@ -245,11 +249,13 @@
                 <div class="text-4xl text-center">
                     Tempo rimanente: {formatTime(gameTimeRemaining)}
                 </div>
-                {#each playerScore as score}
-                    <div>
-                        punteggio: {score}
-                    </div>
-                {/each}
+                {#if players == 2}
+                    {#each playerScore as score, i}
+                        <PlayerCounter displayName={`Player ${i}`} {score} />
+                    {/each}
+                {:else}
+                    <PlayerCounter score={playerScore[0]} />
+                {/if}
             </div>
         {/if}
     </div>
