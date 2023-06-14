@@ -21,7 +21,7 @@
     let gameTimeRemaining = null;
 
     let gameStartTime = null;
-    let playerOneTTFH = null;
+    let playersTTFH = [];
 
     const drawVideo = true;
 
@@ -91,6 +91,18 @@
         canvasLoop();
     };
 
+    /**
+     * Orders the poses array, so that the first pose is the one that is on the left
+     * @param poseA
+     * @param poseB
+     * 
+     * @returns {number} -1 if poseA is before poseB, 1 if poseA is after poseB, 0 if they are equal
+     
+    const sortPoses = (poseA, poseB) => {
+        console.log(poseA, poseB);
+        return 1;
+    } */
+
     const canvasLoop = async () => {
         ctx.save();
 
@@ -112,9 +124,22 @@
 
         let circles = [];
 
-        for (let i = 0; i < poses.length; i++) {
-            const pose = poses[i];
-            let keypoints = getKeypoints(pose);
+        let playersKeypoins = poses.map((pose) => getKeypoints(pose));
+
+        playersKeypoins.sort((a, b) => {
+            let minXa = a.reduce((min, keypoint) => {
+                return keypoint.x < min ? keypoint.x : min;
+            }, Infinity);
+
+            let minXb = b.reduce((min, keypoint) => {
+                return keypoint.x < min ? keypoint.x : min;
+            }, Infinity);
+
+            return a - b;
+        });
+
+        for (let i = 0; i < playersKeypoins.length; i++) {
+            const keypoints = playersKeypoins[i];
             keypoints.forEach(({ x, y, score }) => {
                 if (score > 0.2) {
                     let circle = new Circle(20);
@@ -132,9 +157,9 @@
                             players == 1 ? "ALL" : i == 0 ? "LEFT" : "RIGHT"
                         );
                         playerScore[i]++;
-                        if (playerOneTTFH === null) {
+                        if (playersTTFH[i] == null) {
                             let firstPointTime = Date.now();
-                            playerOneTTFH = firstPointTime - gameStartTime;
+                            playersTTFH[i] = firstPointTime - gameStartTime;
                         }
                     }
                 });
@@ -192,11 +217,16 @@
                 console.debug("time ended");
                 gameOn = false;
                 clearInterval(intervalId);
-                dispatch("gameEnded", {
-                    playerScore,
-                    time,
-                    ttfh: playerOneTTFH,
-                });
+
+                let results = [];
+                for (let i = 0; i < players; i++) {
+                    results.push({
+                        score: playerScore[i],
+                        time,
+                        ttfh: playersTTFH[i],
+                    });
+                }
+                dispatch("gameEnded", results);
             }
         }, 1000);
     }
@@ -228,6 +258,8 @@
         setupCamera();
 
         startLoadingTimer();
+
+        playersTTFH = new Array(players).fill(null);
     });
 </script>
 

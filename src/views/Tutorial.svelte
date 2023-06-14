@@ -4,13 +4,20 @@
     import GameStats from "../lib/GameStats.svelte";
     import Setup from "../lib/training/Setup.svelte";
 
-    let page = "setup";
+    let page = "gameEnding";
     let gameConfig = {};
-    let results = {
-        score: 3,
-        time: 10,
-        ttfh: 12,
-    };
+    let results = [
+        {
+            score: 2,
+            time: 12,
+            ttfh: 12,
+        },
+        {
+            score: 3,
+            time: 12,
+            ttfh: 15,
+        },
+    ];
 
     const startTraining = (data) => {
         gameConfig = data.detail;
@@ -19,6 +26,7 @@
 
     const gameEnded = (data) => {
         results = data.detail;
+        console.log(results);
         page = "gameEnding";
     };
 </script>
@@ -38,7 +46,7 @@
     {/if}
 
     {#if page === "gameEnding"}
-        <GameStats stats={results} players={1} />
+        <GameStats stats={results} />
         <Button on:click={() => (page = "setup")}>Ricomincia</Button>
     {/if}
 </div>
