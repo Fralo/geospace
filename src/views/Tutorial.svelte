@@ -5,20 +5,14 @@
     import GameStats from "../lib/GameStats.svelte";
     import Setup from "../lib/training/Setup.svelte";
 
-    let page = "gameEnding";
-    let gameConfig = {};
-    let results = [
-        {
-            score: 2,
-            time: 12,
-            ttfh: 12,
-        },
-        {
-            score: 3,
-            time: 12,
-            ttfh: 15,
-        },
-    ];
+    let page = "setup";
+    let gameConfig = {
+        mode: "MODE_NOSE",
+        time: 60,
+        playersNum: 1,
+    };
+
+    let results = [];
 
     const startTraining = (data) => {
         gameConfig = data.detail;

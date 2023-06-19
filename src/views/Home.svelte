@@ -7,17 +7,11 @@
         <h1 class="text-5xl font-bold">GEOSPACE</h1>
         <div class="max-w-3xl">
             Geospace è un coinvolgente web-game di riflessi che mette alla prova
-            la velocità e l'abilità dei giocatori. <br/>Ambientato in uno spazio
-            futuristico, il gioco presenta un'interfaccia grafica accattivante e
-            una colonna sonora elettronica che contribuiscono a creare
-            un'atmosfera coinvolgente. L'obiettivo del gioco è di evitare
-            ostacoli e pericoli che si presentano lungo il percorso e
-            raccogliere il maggior numero possibile di power-up per aumentare il
-            punteggio. I giocatori controllano un'astronave che si muove ad alta
-            velocità e deve evitare gli ostacoli saltando o abbassandosi, a
-            seconda della loro posizione.
+            la velocità e l'abilità dei giocatori.
         </div>
 
-        <Button type="primary">Sono un bottone</Button>
+        <Button type="primary" on:click={() => (window.location.href = "#/play")}
+            >PLAY</Button
+        >
     </div>
 </div>

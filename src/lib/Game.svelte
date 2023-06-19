@@ -290,7 +290,10 @@
                 </div>
                 {#if players == 2}
                     {#each playerScore as score, i}
-                        <PlayerCounter displayName={`Player ${i+1}`} {score} />
+                        <PlayerCounter
+                            displayName={`Player ${i + 1}`}
+                            {score}
+                        />
                     {/each}
                 {/if}
             {/if}
