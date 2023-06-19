@@ -209,7 +209,7 @@
 
     let intervalId = null; // Store interval ID so we can stop the countdown later
 
-    function startCountdown() {
+    const startCountdown = () => {
         // Set up interval to update time remaining every second
         intervalId = setInterval(() => {
             gameTimeRemaining--;
@@ -251,6 +251,7 @@
 
         canvas.width = videoWidth;
         canvas.height = videoHeight;
+        
         ctx = canvas.getContext("2d");
 
         await initializePosenet();
