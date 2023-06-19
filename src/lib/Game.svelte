@@ -273,12 +273,6 @@
     {/if}
     <div class="h-full flex items-center justify-around text-white">
         <div>
-            {#if players === 2}
-                <div class="text-4xl text-center">Player One:</div>
-                <div>{multiplayerScore.playerOne}</div>
-            {/if}
-        </div>
-        <div>
             <video class="hidden" id="video" playsinline>
                 Video stream not available.
             </video>
@@ -286,22 +280,20 @@
             {#if gameOn}
                 <div class="mt-8 flex flex-col gap-4 items-center">
                     <div class="text-4xl text-center">
-                        Tempo rimanente: {formatTime(gameTimeRemaining)}
+                        Time left: {formatTime(gameTimeRemaining)}
                     </div>
                     {#if players === 1}
                         <div class="text-4xl text-center">
-                            Punteggio: {score}
+                            Score: {playerScore[0]}
                         </div>
                     {/if}
                 </div>
                 {#if players == 2}
                     {#each playerScore as score, i}
-                        <PlayerCounter displayName={`Player ${i}`} {score} />
+                        <PlayerCounter displayName={`Player ${i+1}`} {score} />
                     {/each}
-                {:else}
-                    <PlayerCounter score={playerScore[0]} />
                 {/if}
-            </div>
-        {/if}
+            {/if}
+        </div>
     </div>
 </div>
