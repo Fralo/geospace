@@ -1,4 +1,5 @@
 <script lang="ts">
+    import InfoIcon from "../common/icons/InfoIcon.svelte";
     import TrophyCupIcon from "../common/icons/TrophyCupIcon.svelte";
 
     export let winning = false;
@@ -13,7 +14,6 @@
 
     let formattedStats = {
         score: stats.score,
-        time: stats.time,
         mediumSpeed: stats.score / stats.time,
         ttfh: stats.ttfh,
     };
@@ -24,17 +24,14 @@
             value: formattedStats.score,
         },
         {
-            label: "Time",
-            value: `${formattedStats.time} seconds`,
-        },
-        {
             label: "Medium speed",
             value: `${new Intl.NumberFormat("en-IN", {
                 maximumSignificantDigits: 2,
             }).format(formattedStats.mediumSpeed)} hits/second`,
         },
         {
-            label: "TTFH (Time To First Hit)",
+            label: "TTFH",
+            info: "Time to first hit",
             value: formattedStats.ttfh
                 ? `${formattedStats.ttfh} milliseconds`
                 : "N/A",
@@ -65,7 +62,13 @@
                 index === 0 ? "flex gap-3 items-center" : ""
             }`}
         >
-            <div class="p-2 text-2xl">{stat.label}:</div>
+            <div class="flex items-center cursor-pointer gap-2 p-2 text-2xl">
+                <span
+                    >{stat.label}: {#if stat.info}
+                        <span>({stat.info})</span>
+                    {/if}
+                </span>
+            </div>
             <div class="p-2 text-4xl">{stat.value}</div>
         </div>
     {/each}

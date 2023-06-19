@@ -24,25 +24,24 @@
     }
 </script>
 
-<div class="w-full flex items-center justify-center">
+<div class="w-full flex items-center justify-center pt-10">
     <div>
-        <div>
-            <h3>Results:</h3>
-            <h1>{winnerLabel} wins !</h1>
+        <div class="text-center text-8xl font-bold">
+            <h1>{winnerLabel} wins !  🎉</h1>
         </div>
 
-        <div>Here are some statistics about the game</div>
+        <div class="mt-10">Here are some statistics about the game</div>
 
         <div class="mt-10 grid grid-cols-2 gap-10">
             <OnePlayerGameStats
                 customClass="col-span-1"
-                title="Player 1 Stats"
+                title="Player 1"
                 stats={stats[0]}
                 winning={winner === -1}
             />
             <OnePlayerGameStats
                 customClass="col-span-1"
-                title="Player 2 Stats"
+                title="Player 2"
                 stats={stats[1]}
                 winning={winner === 1}
             />
