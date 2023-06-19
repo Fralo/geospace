@@ -7,6 +7,7 @@
     import "@tensorflow/tfjs";
     import * as poseDetection from "@tensorflow-models/pose-detection";
     import { Circle, detectCollision, Target } from "../game/Shapes";
+    import PlayerCounter from "./game-stats/PlayerCounter.svelte";
 
     let video = null;
     let canvas: HTMLCanvasElement = null;
@@ -20,7 +21,7 @@
     let gameTimeRemaining = null;
 
     let gameStartTime = null;
-    let playerOneTTFH = null;
+    let playersTTFH = [];
 
     const drawVideo = true;
 
@@ -33,15 +34,25 @@
     export let time = 60;
     export let players = 1;
 
-    const videoWidth = window.innerWidth / 2;
+    const videoWidth = window.innerWidth / 1.2;
     const videoHeight = window.innerWidth / 2.8;
 
-    let target = new Target();
-    let score = 0;
-    let multiplayerScore = {
-        playerOne: 0,
-        playerTwo: 0,
-    };
+    let targets = [];
+    for (let i = 0; i < players; i++) {
+        let target = new Target(i > 0 ? "green" : "blue");
+        target.setRandomRawCoords(
+            {
+                width: videoWidth,
+                height: videoHeight,
+            },
+            players == 1 ? "ALL" : i == 0 ? "LEFT" : "RIGHT"
+        );
+
+        targets.push(target);
+    }
+
+    let playerScore = players == 1 ? [0] : [0, 0];
+
     const setupCamera = async () => {
         if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
             throw new Error(
@@ -70,9 +81,27 @@
     };
 
     const setupCanvas = () => {
-        target.setRandomCoords(canvas);
+        for (let i = 0; i < targets.length; i++) {
+            const target = targets[i];
+            target.setRandomCoords(
+                canvas,
+                players == 1 ? "ALL" : i == 0 ? "LEFT" : "RIGHT"
+            );
+        }
         canvasLoop();
     };
+
+    /**
+     * Orders the poses array, so that the first pose is the one that is on the left
+     * @param poseA
+     * @param poseB
+     * 
+     * @returns {number} -1 if poseA is before poseB, 1 if poseA is after poseB, 0 if they are equal
+     
+    const sortPoses = (poseA, poseB) => {
+        console.log(poseA, poseB);
+        return 1;
+    } */
 
     const canvasLoop = async () => {
         ctx.save();
@@ -87,17 +116,30 @@
             nmsRadius: 20,
         };
 
-        const poses = await detector.estimatePoses(canvas, estimationConfig);
+        let poses = await detector.estimatePoses(canvas, estimationConfig);
 
-        console.log(poses);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         ctx.drawImage(video, 0, 0, videoWidth, videoHeight);
 
         let circles = [];
 
-        for (const pose of poses) {
-            let keypoints = getKeypoints(pose);
+        let playersKeypoins = poses.map((pose) => getKeypoints(pose));
+
+        playersKeypoins.sort((a, b) => {
+            let minXa = a.reduce((min, keypoint) => {
+                return keypoint.x < min ? keypoint.x : min;
+            }, Infinity);
+
+            let minXb = b.reduce((min, keypoint) => {
+                return keypoint.x < min ? keypoint.x : min;
+            }, Infinity);
+
+            return a - b;
+        });
+
+        for (let i = 0; i < playersKeypoins.length; i++) {
+            const keypoints = playersKeypoins[i];
             keypoints.forEach(({ x, y, score }) => {
                 if (score > 0.2) {
                     let circle = new Circle(20);
@@ -108,20 +150,24 @@
             });
 
             if (gameOn) {
-                target.draw(canvas, ctx);
-
                 circles.forEach((circle) => {
-                    if (detectCollision(circle, target)) {
-                        target.setRandomCoords(canvas);
-                        score++;
-                        if (playerOneTTFH === null) {
+                    if (detectCollision(circle, targets[i])) {
+                        targets[i].setRandomCoords(
+                            canvas,
+                            players == 1 ? "ALL" : i == 0 ? "LEFT" : "RIGHT"
+                        );
+                        playerScore[i]++;
+                        if (playersTTFH[i] == null) {
                             let firstPointTime = Date.now();
-                            playerOneTTFH = firstPointTime - gameStartTime;
+                            playersTTFH[i] = firstPointTime - gameStartTime;
                         }
                     }
                 });
             }
         }
+
+        //draws the taregt
+        targets.forEach((target) => target.draw(canvas, ctx));
 
         ctx.restore();
         requestAnimationFrame(canvasLoop);
@@ -168,9 +214,19 @@
         intervalId = setInterval(() => {
             gameTimeRemaining--;
             if (gameTimeRemaining === 0) {
+                console.debug("time ended");
                 gameOn = false;
                 clearInterval(intervalId);
-                dispatch("gameEnded", { score, time, ttfh: playerOneTTFH });
+
+                let results = [];
+                for (let i = 0; i < players; i++) {
+                    results.push({
+                        score: playerScore[i],
+                        time,
+                        ttfh: playersTTFH[i],
+                    });
+                }
+                dispatch("gameEnded", results);
             }
         }, 1000);
     }
@@ -202,6 +258,8 @@
         setupCamera();
 
         startLoadingTimer();
+
+        playersTTFH = new Array(players).fill(null);
     });
 </script>
 
@@ -236,13 +294,14 @@
                         </div>
                     {/if}
                 </div>
-            {/if}
-        </div>
-        <div>
-            {#if players === 2}
-                <div class="text-4xl text-center">Player Two:</div>
-                <div>{multiplayerScore.playerTwo}</div>
-            {/if}
-        </div>
+                {#if players == 2}
+                    {#each playerScore as score, i}
+                        <PlayerCounter displayName={`Player ${i}`} {score} />
+                    {/each}
+                {:else}
+                    <PlayerCounter score={playerScore[0]} />
+                {/if}
+            </div>
+        {/if}
     </div>
 </div>

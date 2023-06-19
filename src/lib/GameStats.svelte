@@ -1,14 +1,17 @@
 <script lang="ts">
     import OnePlayerGameStats from "./game-stats/OnePlayerGameStats.svelte";
+    import TwoPlayersStats from "./game-stats/TwoPlayersStats.svelte";
 
-    export let stats = null;
-    export let players = 1;
+    export let stats = [];
 </script>
 
 <div class="flex flex-col items-center">
-    {#if players === 1}
+    {#if stats?.length === 1}
         <div>
-            <OnePlayerGameStats {stats} />
+            <OnePlayerGameStats stats={stats[0]} />
         </div>
+    {/if}
+    {#if stats?.length === 2}
+        <TwoPlayersStats {stats} />
     {/if}
 </div>

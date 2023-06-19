@@ -34,13 +34,33 @@ export class Circle extends Shape {
 }
 
 export class Target extends Circle {
-    constructor() {
-        super(50, "blue");
+    constructor(color: string = "blue") {
+        super(50, color);
     }
 
-    setRandomCoords(canvas: HTMLCanvasElement) {
-        this.x = Math.random() * (canvas.width - this.radius*2);
-        this.y = Math.random() * (canvas.height - this.radius*2);
+    getRandomXCoords(width, position: "LEFT" | "RIGHT" | "ALL" = "ALL") {
+        const xOffset = position === "LEFT" ? width / 2 : 0;
+        const xRange = position === "ALL" ? width : width / 2;
+
+        return xOffset + Math.random() * (xRange - this.radius * 2);
+    }
+
+    setRandomRawCoords(
+        dimensions: { width: number; height: number },
+        position: "LEFT" | "RIGHT" | "ALL" = "ALL"
+    ) {
+        this.x = this.getRandomXCoords(dimensions.width, position);
+        this.y = Math.random() * (dimensions.height - this.radius * 2);
+    }
+    
+    setRandomCoords(
+        canvas: HTMLCanvasElement,
+        position: "LEFT" | "RIGHT" | "ALL" = "ALL"
+    ) {
+        this.setRandomRawCoords(
+            { width: canvas.width, height: canvas.height },
+            position
+        );
     }
 }
 

@@ -1,24 +1,24 @@
 <script lang="ts">
     import Button from "../lib/common/Button.svelte";
+    import RetryIcon from "../lib/common/icons/RetryIcon.svelte";
     import Game from "../lib/Game.svelte";
     import GameStats from "../lib/GameStats.svelte";
     import Setup from "../lib/training/Setup.svelte";
 
-    type GameConfig = {
-        mode: string;
-        time: number;
-        playersNum: number;
-    };
-
-    let page = "setup";
-
-    let gameConfig: GameConfig = null;
-
-    let results = {
-        score: 3,
-        time: 10,
-        ttfh: 12,
-    };
+    let page = "gameEnding";
+    let gameConfig = {};
+    let results = [
+        {
+            score: 2,
+            time: 12,
+            ttfh: 12,
+        },
+        {
+            score: 3,
+            time: 12,
+            ttfh: 15,
+        },
+    ];
 
     const startTraining = (data) => {
         gameConfig = data.detail;
@@ -27,6 +27,7 @@
 
     const gameEnded = (data) => {
         results = data.detail;
+        console.log(results);
         page = "gameEnding";
     };
 </script>
@@ -46,7 +47,13 @@
     {/if}
 
     {#if page === "gameEnding"}
-        <GameStats stats={results} players={1} />
-        <Button on:click={() => (page = "setup")}>Ricomincia</Button>
+        <GameStats stats={results} />
+        <div class="mt-10 flex justify-center">
+            <Button on:click={() => (page = "setup")}>
+                <span class="flex items-center gap-2">
+                    Play Again <RetryIcon width={14} height={14}/>
+                </span>
+            </Button>
+        </div>
     {/if}
 </div>
