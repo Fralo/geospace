@@ -16,18 +16,18 @@
             href: "/play",
             text: "Play",
         },
-        {
-            href: "/training",
-            text: "Training",
-        },
     ];
 </script>
 
 <div
-    class="h-24 flex justify-between items-center px-8 border-b border-gray-800 "
+    class="h-24 flex justify-between items-center px-8 border-b border-gray-800"
 >
     <a href="#/">
-        <h3 class="font-semibold tracking-[3px] w-[150px] hover:font-bold transition-all">GEOSPACE</h3>
+        <h3
+            class="font-semibold tracking-[3px] w-[150px] hover:font-bold transition-all"
+        >
+            GEOSPACE
+        </h3>
     </a>
 
     <nav>
