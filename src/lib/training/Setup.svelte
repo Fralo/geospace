@@ -78,7 +78,7 @@
         </div>
         <div class="mt-20 flex justify-center">
             <Button otherClasses="w-full" on:click={startTraining}
-                >Avvia</Button
+                >Start</Button
             >
         </div>
     </div>
