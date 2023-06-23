@@ -14,7 +14,7 @@
 
     let results = [];
 
-    const startTraining = (data) => {
+    const startGame = (data) => {
         gameConfig = data.detail;
         page = "training";
     };
@@ -28,7 +28,7 @@
 
 <div>
     {#if page === "setup"}
-        <Setup on:startTraining={startTraining} />
+        <Setup on:startGame={startGame} />
     {/if}
 
     {#if page === "training"}
