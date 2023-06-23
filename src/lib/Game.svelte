@@ -9,234 +9,235 @@
     import { Circle, detectCollision, Target } from "../game/Shapes";
     import PlayerCounter from "./game-stats/PlayerCounter.svelte";
 
-    let video = null;
-    let canvas: HTMLCanvasElement = null;
-    let ctx: CanvasRenderingContext2D = null;
-    let detector = null;
+    import { Game } from "../game/Game";
 
-    let showLoadingTimer = null;
-    let secondsToWait = null;
+    // let video = null;
+    // let canvas: HTMLCanvasElement = null;
+    // let ctx: CanvasRenderingContext2D = null;
+    // let detector = null;
 
-    let gameOn = false;
-    let gameTimeRemaining = null;
+    // let secondsToWait = null;
 
-    let gameStartTime = null;
-    let playersTTFH = [];
+    // let gameOn = false;
+    // let gameTimeRemaining = null;
 
-    const drawVideo = true;
+    // let gameStartTime = null;
+    // let playersTTFH = [];
 
-    const MODES = {
-        MODE_HANDS: ["right_wrist", "left_wrist"],
-        MODE_NOSE: ["nose"],
-    };
+    // const drawVideo = true;
+
+    // const MODES = {
+    //     MODE_HANDS: ["right_wrist", "left_wrist"],
+    //     MODE_NOSE: ["nose"],
+    // };
 
     export let mode = "MODE_NOSE";
     export let time = 60;
     export let players = 1;
 
-    const videoWidth = window.innerWidth / 1.2;
-    const videoHeight = window.innerWidth / 2.8;
+    // const videoWidth = window.innerWidth / 1.2;
+    // const videoHeight = window.innerWidth / 2.8;
 
-    let targets = [];
-    for (let i = 0; i < players; i++) {
-        let target = new Target(i > 0 ? "green" : "blue");
-        target.setRandomRawCoords(
-            {
-                width: videoWidth,
-                height: videoHeight,
-            },
-            players == 1 ? "ALL" : i == 0 ? "LEFT" : "RIGHT"
-        );
+    // let targets = [];
+    // for (let i = 0; i < players; i++) {
+    //     let target = new Target(i > 0 ? "green" : "blue");
+    //     target.setRandomRawCoords(
+    //         {
+    //             width: videoWidth,
+    //             height: videoHeight,
+    //         },
+    //         players == 1 ? "ALL" : i == 0 ? "LEFT" : "RIGHT"
+    //     );
 
-        targets.push(target);
-    }
+    //     targets.push(target);
+    // }
 
-    let playerScore = players == 1 ? [0] : [0, 0];
+    // let playerScore = players == 1 ? [0] : [0, 0];
 
-    const setupCamera = async () => {
-        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-            throw new Error(
-                "Browser API navigator.mediaDevices.getUserMedia not available"
-            );
-        }
+    // const setupCamera = async () => {
+    //     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    //         throw new Error(
+    //             "Browser API navigator.mediaDevices.getUserMedia not available"
+    //         );
+    //     }
 
-        video.width = videoWidth;
-        video.height = videoHeight;
+    //     video.width = videoWidth;
+    //     video.height = videoHeight;
 
-        const stream = await navigator.mediaDevices.getUserMedia({
-            audio: false,
-            video: {
-                facingMode: "user",
-                width: videoWidth,
-                height: videoHeight,
-            },
-        });
+    //     const stream = await navigator.mediaDevices.getUserMedia({
+    //         audio: false,
+    //         video: {
+    //             facingMode: "user",
+    //             width: videoWidth,
+    //             height: videoHeight,
+    //         },
+    //     });
 
-        video.srcObject = stream;
-        video.onloadedmetadata = () => {
-            video.play();
-        };
+    //     video.srcObject = stream;
+    //     video.onloadedmetadata = () => {
+    //         video.play();
+    //     };
 
-        setupCanvas();
-    };
+    //     setupCanvas();
+    // };
 
-    const setupCanvas = () => {
-        for (let i = 0; i < targets.length; i++) {
-            const target = targets[i];
-            target.setRandomCoords(
-                canvas,
-                players == 1 ? "ALL" : i == 0 ? "LEFT" : "RIGHT"
-            );
-        }
-        canvasLoop();
-    };
+    // const setupCanvas = () => {
+    //     for (let i = 0; i < targets.length; i++) {
+    //         const target = targets[i];
+    //         target.setRandomCoords(
+    //             canvas,
+    //             players == 1 ? "ALL" : i == 0 ? "LEFT" : "RIGHT"
+    //         );
+    //     }
+    //     canvasLoop();
+    // };
 
-    /**
-     * Orders the poses array, so that the first pose is the one that is on the left
-     * @param poseA
-     * @param poseB
-     * 
-     * @returns {number} -1 if poseA is before poseB, 1 if poseA is after poseB, 0 if they are equal
-     
-    const sortPoses = (poseA, poseB) => {
-        console.log(poseA, poseB);
-        return 1;
-    } */
+    // /**
+    //  * Orders the poses array, so that the first pose is the one that is on the left
+    //  * @param poseA
+    //  * @param poseB
+    //  *
+    //  * @returns {number} -1 if poseA is before poseB, 1 if poseA is after poseB, 0 if they are equal
 
-    const canvasLoop = async () => {
-        ctx.save();
+    // const sortPoses = (poseA, poseB) => {
+    //     console.log(poseA, poseB);
+    //     return 1;
+    // } */
 
-        ctx.translate(canvas.width, 0);
-        ctx.scale(-1, 1);
+    // const canvasLoop = async () => {
+    //     ctx.save();
 
-        const estimationConfig = {
-            maxPoses: players,
-            flipHorizontal: false,
-            scoreThreshold: 0.5,
-            nmsRadius: 20,
-        };
+    //     ctx.translate(canvas.width, 0);
+    //     ctx.scale(-1, 1);
 
-        let poses = await detector.estimatePoses(canvas, estimationConfig);
+    //     const estimationConfig = {
+    //         maxPoses: players,
+    //         flipHorizontal: false,
+    //         scoreThreshold: 0.5,
+    //         nmsRadius: 20,
+    //     };
 
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    //     let poses = await detector.estimatePoses(canvas, estimationConfig);
 
-        ctx.drawImage(video, 0, 0, videoWidth, videoHeight);
+    //     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        let circles = [];
+    //     ctx.drawImage(video, 0, 0, videoWidth, videoHeight);
 
-        let playersKeypoins = poses.map((pose) => getKeypoints(pose));
+    //     let circles = [];
 
-        playersKeypoins.sort((a, b) => {
-            let minXa = a.reduce((min, keypoint) => {
-                return keypoint.x < min ? keypoint.x : min;
-            }, Infinity);
+    //     let playersKeypoins = poses.map((pose) => getKeypoints(pose));
 
-            let minXb = b.reduce((min, keypoint) => {
-                return keypoint.x < min ? keypoint.x : min;
-            }, Infinity);
+    //     playersKeypoins.sort((a, b) => {
+    //         let minXa = a.reduce((min, keypoint) => {
+    //             return keypoint.x < min ? keypoint.x : min;
+    //         }, Infinity);
 
-            return a - b;
-        });
+    //         let minXb = b.reduce((min, keypoint) => {
+    //             return keypoint.x < min ? keypoint.x : min;
+    //         }, Infinity);
 
-        for (let i = 0; i < playersKeypoins.length; i++) {
-            const keypoints = playersKeypoins[i];
-            keypoints.forEach(({ x, y, score }) => {
-                if (score > 0.2) {
-                    let circle = new Circle(20);
-                    circle.setCoords(canvas.width - x, y);
-                    circle.draw(canvas, ctx);
-                    circles.push(circle);
-                }
-            });
+    //         return a - b;
+    //     });
 
-            if (gameOn) {
-                circles.forEach((circle) => {
-                    if (detectCollision(circle, targets[i])) {
-                        targets[i].setRandomCoords(
-                            canvas,
-                            players == 1 ? "ALL" : i == 0 ? "LEFT" : "RIGHT"
-                        );
-                        playerScore[i]++;
-                        if (playersTTFH[i] == null) {
-                            let firstPointTime = Date.now();
-                            playersTTFH[i] = firstPointTime - gameStartTime;
-                        }
-                    }
-                });
-            }
-        }
+    //     for (let i = 0; i < playersKeypoins.length; i++) {
+    //         const keypoints = playersKeypoins[i];
+    //         keypoints.forEach(({ x, y, score }) => {
+    //             if (score > 0.2) {
+    //                 let circle = new Circle(20);
+    //                 circle.setCoords(canvas.width - x, y);
+    //                 circle.draw(canvas, ctx);
+    //                 circles.push(circle);
+    //             }
+    //         });
 
-        //draws the taregt
-        targets.forEach((target) => target.draw(canvas, ctx));
+    //         if (gameOn) {
+    //             circles.forEach((circle) => {
+    //                 if (detectCollision(circle, targets[i])) {
+    //                     targets[i].setRandomCoords(
+    //                         canvas,
+    //                         players == 1 ? "ALL" : i == 0 ? "LEFT" : "RIGHT"
+    //                     );
+    //                     playerScore[i]++;
+    //                     if (playersTTFH[i] == null) {
+    //                         let firstPointTime = Date.now();
+    //                         playersTTFH[i] = firstPointTime - gameStartTime;
+    //                     }
+    //                 }
+    //             });
+    //         }
+    //     }
 
-        ctx.restore();
-        requestAnimationFrame(canvasLoop);
-    };
+    //     //draws the taregt
+    //     targets.forEach((target) => target.draw(canvas, ctx));
 
-    const getKeypoints = (pose) => {
-        if (pose == null) return [];
-        let allKeypoints = pose.keypoints;
+    //     ctx.restore();
+    //     requestAnimationFrame(canvasLoop);
+    // };
 
-        return allKeypoints.filter((keypoint) => {
-            return MODES[mode].includes(keypoint.name);
-        });
-    };
+    // const getKeypoints = (pose) => {
+    //     if (pose == null) return [];
+    //     let allKeypoints = pose.keypoints;
 
-    const initializePosenet = async () => {
-        const detectorConfig = {
-            modelType:
-                players === 1
-                    ? poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING
-                    : poseDetection.movenet.modelType.MULTIPOSE_LIGHTNING,
-        };
-        const model = poseDetection.SupportedModels.MoveNet;
-        detector = await poseDetection.createDetector(model, detectorConfig);
-    };
+    //     return allKeypoints.filter((keypoint) => {
+    //         return MODES[mode].includes(keypoint.name);
+    //     });
+    // };
 
-    const startLoadingTimer = () => {
-        showLoadingTimer = true;
-        secondsToWait = 3;
-        let timeInterval = setInterval(() => {
-            if (secondsToWait === 1) {
-                clearInterval(timeInterval);
-                showLoadingTimer = false;
-                startGame();
-                return;
-            }
-            secondsToWait--;
-        }, 1000);
-    };
+    // const initializePosenet = async () => {
+    //     const detectorConfig = {
+    //         modelType:
+    //             players === 1
+    //                 ? poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING
+    //                 : poseDetection.movenet.modelType.MULTIPOSE_LIGHTNING,
+    //     };
+    //     const model = poseDetection.SupportedModels.MoveNet;
+    //     detector = await poseDetection.createDetector(model, detectorConfig);
+    // };
 
-    let intervalId = null; // Store interval ID so we can stop the countdown later
+    // const startLoadingTimer = () => {
+    //     showLoadingTimer = true;
+    //     secondsToWait = 3;
+    //     let timeInterval = setInterval(() => {
+    //         if (secondsToWait === 1) {
+    //             clearInterval(timeInterval);
+    //             showLoadingTimer = false;
+    //             startGame();
+    //             return;
+    //         }
+    //         secondsToWait--;
+    //     }, 1000);
+    // };
 
-    const startCountdown = () => {
-        // Set up interval to update time remaining every second
-        intervalId = setInterval(() => {
-            gameTimeRemaining--;
-            if (gameTimeRemaining === 0) {
-                console.debug("time ended");
-                gameOn = false;
-                clearInterval(intervalId);
+    // let intervalId = null; // Store interval ID so we can stop the countdown later
 
-                let results = [];
-                for (let i = 0; i < players; i++) {
-                    results.push({
-                        score: playerScore[i],
-                        time,
-                        ttfh: playersTTFH[i],
-                    });
-                }
-                dispatch("gameEnded", results);
-            }
-        }, 1000);
-    }
+    // const startCountdown = () => {
+    //     // Set up interval to update time remaining every second
+    //     intervalId = setInterval(() => {
+    //         gameTimeRemaining--;
+    //         if (gameTimeRemaining === 0) {
+    //             console.debug("time ended");
+    //             gameOn = false;
+    //             clearInterval(intervalId);
 
-    const startGame = () => {
-        gameOn = true;
-        gameTimeRemaining = time;
-        gameStartTime = Date.now();
-        startCountdown();
-    };
+    //             let results = [];
+    //             for (let i = 0; i < players; i++) {
+    //                 results.push({
+    //                     score: playerScore[i],
+    //                     time,
+    //                     ttfh: playersTTFH[i],
+    //                 });
+    //             }
+    //             dispatch("gameEnded", results);
+    //         }
+    //     }, 1000);
+    // }
+
+    // const startGame = () => {
+    //     gameOn = true;
+    //     gameTimeRemaining = time;
+    //     gameStartTime = Date.now();
+    //     startCountdown();
+    // };
 
     const formatTime = (time) => {
         const minutes = Math.floor(time / 60);
@@ -245,31 +246,37 @@
         return `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
     };
 
+    let game: Game;
+
     onMount(async () => {
-        video = document.getElementById("video") as HTMLVideoElement;
-        canvas = document.getElementById("canvas") as HTMLCanvasElement;
+        const video = document.getElementById("video") as HTMLVideoElement;
+        const canvas = document.getElementById("canvas") as HTMLCanvasElement;
 
-        canvas.width = videoWidth;
-        canvas.height = videoHeight;
-        
-        ctx = canvas.getContext("2d");
+        // canvas.width = videoWidth;
+        // canvas.height = videoHeight;
 
-        await initializePosenet();
+        // await initializePosenet();
 
-        setupCamera();
+        // setupCamera();
 
-        startLoadingTimer();
+        // startLoadingTimer();
 
-        playersTTFH = new Array(players).fill(null);
+        // playersTTFH = new Array(players).fill(null);
+
+        game = new Game(video, canvas, time, mode, players, (results) => {
+            dispatch("gameEnded", results);
+        });
+
+        game.boot();
     });
 </script>
 
 <div class="h-full min-h-[80vh] relative">
-    {#if showLoadingTimer}
+    {#if game && game.showLoadingTimer}
         <div
             class="bg-opacity-80 bg-black top-0 left-0 absolute w-full h-full text-6xl flex items-center justify-center"
         >
-            {secondsToWait}
+            {game.secondsToWait}
         </div>
     {/if}
     <div class="h-full flex items-center justify-around text-white">
@@ -278,19 +285,20 @@
                 Video stream not available.
             </video>
             <canvas id="canvas" />
-            {#if gameOn}
+            {#if game && game.gameOn}
+            aa
                 <div class="mt-8 flex flex-col gap-4 items-center">
                     <div class="text-4xl text-center">
-                        Time left: {formatTime(gameTimeRemaining)}
+                        Time left: {formatTime(game.gameTimeRemaining)}
                     </div>
                     {#if players === 1}
                         <div class="text-4xl text-center">
-                            Score: {playerScore[0]}
+                            Score: {game.playerScore[0]}
                         </div>
                     {/if}
                 </div>
                 {#if players == 2}
-                    {#each playerScore as score, i}
+                    {#each game.playerScore as score, i}
                         <PlayerCounter
                             displayName={`Player ${i + 1}`}
                             {score}
