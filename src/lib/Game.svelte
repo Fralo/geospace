@@ -35,21 +35,26 @@
     export let players = 1;
 
     const videoWidth = window.innerWidth / 1.2;
-    const videoHeight = window.innerWidth / 2.8;
+    const videoHeight = window.innerWidth / 2.2;
 
     let targets = [];
-    for (let i = 0; i < players; i++) {
-        let target = new Target(i > 0 ? "green" : "blue");
-        target.setRandomRawCoords(
-            {
-                width: videoWidth,
-                height: videoHeight,
-            },
-            players == 1 ? "ALL" : i == 0 ? "LEFT" : "RIGHT"
-        );
 
-        targets.push(target);
-    }
+    const initTargets = () => {
+        for (let i = 0; i < players; i++) {
+            let target = new Target(i > 0 ? "green" : "blue");
+            target.setRandomRawCoords(
+                {
+                    width: videoWidth,
+                    height: videoHeight,
+                },
+                players == 1 ? "ALL" : i == 0 ? "LEFT" : "RIGHT"
+            );
+
+            targets.push(target);
+        }
+    };
+
+    initTargets();
 
     let playerScore = players == 1 ? [0] : [0, 0];
 
@@ -141,12 +146,10 @@
         for (let i = 0; i < playersKeypoins.length; i++) {
             const keypoints = playersKeypoins[i];
             keypoints.forEach(({ x, y, score }) => {
-                if (score > 0.2) {
-                    let circle = new Circle(20);
-                    circle.setCoords(canvas.width - x, y);
-                    circle.draw(canvas, ctx);
-                    circles.push(circle);
-                }
+                let circle = new Circle(20);
+                circle.setCoords(canvas.width - x, y);
+                circle.draw(canvas, ctx);
+                circles.push(circle);
             });
 
             if (gameOn) {
@@ -186,8 +189,9 @@
         const detectorConfig = {
             modelType:
                 players === 1
-                    ? poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING
+                    ? poseDetection.movenet.modelType.SINGLEPOSE_THUNDER
                     : poseDetection.movenet.modelType.MULTIPOSE_LIGHTNING,
+            minPoseScore: 0.2,
         };
         const model = poseDetection.SupportedModels.MoveNet;
         detector = await poseDetection.createDetector(model, detectorConfig);
