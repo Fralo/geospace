@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { createEventDispatcher } from "svelte";
+    import { createEventDispatcher, onMount } from "svelte";
 
     const dispatch = createEventDispatcher();
 
@@ -43,13 +43,34 @@
     let timeMultilpier = 1;
     let playersNum = 1;
 
+    let alertDialogue: HTMLDialogElement;
+
     const startGame = () => {
+        if (mode === "MODE_HANDS") {
+            alertDialogue.showModal();
+            return;
+        }
+
+        dispatchStartGame();
+    };
+
+    const dispatchStartGame = () => {
         dispatch("startGame", {
             mode,
             time: time * timeMultilpier,
             playersNum,
         });
     };
+
+    onMount(() => {
+        alertDialogue = document.getElementById(
+            "favDialog"
+        ) as HTMLDialogElement;
+
+        alertDialogue.addEventListener("close", () => {
+            dispatchStartGame();
+        });
+    });
 </script>
 
 <div class="mt-28 h-full flex justify-center items-center">
@@ -75,8 +96,23 @@
             </div>
         </div>
         <div class="mt-20 flex justify-center">
-            <Button otherClasses="w-full" on:click={startGame}>Start</Button
-            >
+            <Button otherClasses="w-full" on:click={startGame}>Start</Button>
         </div>
     </div>
 </div>
+
+<dialog
+    id="favDialog"
+    class="border border-white rounded-lg bg-gray-900 text-white p-12"
+>
+    <div>
+        <h1 class="text-center font-bold text-3xl">WARNING</h1>
+        <div class="pt-4 max-w-md text-center">
+            You have selected the hands mode.<br/> To have a better experience, we
+            suggest you stay at least 1.5m from the camera.
+        </div>
+    </div>
+    <form class="pt-4 flex justify-center" method="dialog">
+        <Button>Got it</Button>
+    </form>
+</dialog>
