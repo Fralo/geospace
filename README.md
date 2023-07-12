@@ -18,3 +18,8 @@ L'obiettivo del gioco è di evitare ostacoli e pericoli che si presentano lungo 
 **How to run it**
 
 To start the project you just need to install the right version of NodeJS (>=18) and from the root folder `npm i` and `npm run dev`
+
+** Docker ** 
+
+`docker build . -t geospace`
+`docker run -p 8081:80 geospace`
