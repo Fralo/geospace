@@ -5,6 +5,10 @@
     import { routes } from "./routes";
 </script>
 
+<svelte:head>
+    <title>Geospace</title>
+</svelte:head>
+
 <div class="text-white min-h-screen bg-gray-900">
     <Navbar />
     <Router {routes} />
