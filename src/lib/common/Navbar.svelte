@@ -22,7 +22,7 @@
 <div
     class="h-24 flex justify-between items-center px-8 border-b border-gray-800"
 >
-    <a href="#/">
+    <a class="hidden sm:block" href="#/">
         <h3
             class="font-semibold tracking-[3px] w-[150px] hover:font-bold transition-all"
         >
