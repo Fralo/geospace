@@ -34,8 +34,8 @@
     export let time = 60;
     export let players = 1;
 
-    const videoWidth = window.innerWidth / 1.2;
-    const videoHeight = window.innerWidth / 2.2;
+    const videoWidth = window.innerWidth / 1.6;
+    const videoHeight = window.innerWidth / 2.8;
 
     let targets = [];
 
@@ -140,7 +140,7 @@
                 return keypoint.x < min ? keypoint.x : min;
             }, Infinity);
 
-            return a - b;
+            return minXa - minXb;
         });
 
         for (let i = 0; i < playersKeypoins.length; i++) {
