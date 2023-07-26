@@ -37,7 +37,7 @@
     const videoWidth = window.innerWidth / 1.6;
     const videoHeight = window.innerWidth / 2.8;
 
-    let targets = [];
+    let targets: Target[] = [];
 
     const initTargets = () => {
         for (let i = 0; i < players; i++) {
@@ -95,18 +95,6 @@
         }
         canvasLoop();
     };
-
-    /**
-     * Orders the poses array, so that the first pose is the one that is on the left
-     * @param poseA
-     * @param poseB
-     * 
-     * @returns {number} -1 if poseA is before poseB, 1 if poseA is after poseB, 0 if they are equal
-     
-    const sortPoses = (poseA, poseB) => {
-        console.log(poseA, poseB);
-        return 1;
-    } */
 
     const canvasLoop = async () => {
         ctx.save();
